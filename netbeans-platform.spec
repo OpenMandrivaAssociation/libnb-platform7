@@ -1,9 +1,9 @@
 Name:		libnb-platform7
 Version:	6.0
-Release:	0rc1.1mdv
+Release:	%mkrel 0rc1.1
 %define section		devel
 %define source_top	%{name}-src
-%define netbeansdir     %{_libdir}/netbeans
+%define netbeansdir     %{_prefix}/lib/netbeans
 
 %define clusterdir      %{netbeansdir}
 
@@ -14,10 +14,8 @@ Source0:	http://download.netbeans.org/netbeans/6.0/rc1/zip/netbeans-6.0rc1-20071
 Patch0:         netbeans-platform-build.patch
 
 Epoch:		0
-License:	GNU Public License with Classpath Exception, or CDDL
-Group:		System/Libraries
-Vendor:		Mandriva
-Distribution:	Mandriva
+License:	GPLv2 with exceptions or CDDL
+Group:		Development/Java
 BuildArch:	noarch
 BuildRequires:	jpackage-utils >= 0:1.5
 BuildRequires:	ant >= 0:1.6.3
@@ -42,7 +40,7 @@ development of modular desktop applications.
 
 %package javadoc
 Summary: Javadoc documentation for NetBeans Platform
-Group: Development/Documentation
+Group: Development/Java
 %description javadoc
 NetBeans Platform is a set of modules, each providing
 their own APIs and working together or in a standalone
@@ -52,7 +50,7 @@ javadoc to all of them.
 
 %package devel
 Summary: Build harness for NetBeans Platform
-Group: Development/Libraries/Java
+Group: Development/Java
 Requires:   javahelp2 >= 2.0
 %description devel
 Harness with build scripts and ant tasks for everyone who
