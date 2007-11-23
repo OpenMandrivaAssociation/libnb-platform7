@@ -17,6 +17,7 @@ Epoch:		0
 License:	GPLv2 with exceptions or CDDL
 Group:		Development/Java
 BuildArch:	noarch
+BuildRequires:	java-devel >= 1.6.0
 BuildRequires:	jpackage-utils >= 0:1.5
 BuildRequires:	ant >= 0:1.6.3
 BuildRequires:  ant-junit >= 1.6.3
