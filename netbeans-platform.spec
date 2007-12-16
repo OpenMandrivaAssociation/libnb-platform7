@@ -1,6 +1,6 @@
 Name:		libnb-platform7
 Version:	6.0
-Release:	%mkrel 0rc1.1
+Release:	%mkrel 0rc1.2
 %define section		devel
 %define source_top	%{name}-src
 %define netbeansdir     %{_prefix}/lib/netbeans
@@ -18,7 +18,7 @@ License:	GPLv2 with exceptions or CDDL
 Group:		Development/Java
 BuildArch:	noarch
 BuildRequires:	java-devel >= 1.6.0
-BuildRequires:	jpackage-utils >= 0:1.5
+BuildRequires:	java-rpmbuild >= 0:1.5
 BuildRequires:	ant >= 0:1.6.3
 BuildRequires:  ant-junit >= 1.6.3
 BuildRequires:  ant-nodeps >= 0:1.6.3
