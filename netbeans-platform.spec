@@ -30,7 +30,6 @@ Requires: 	java >= 0:1.6
 Requires:	jpackage-utils >= 0:1.5
 Requires:	swing-layout >= 0:1.0
 Requires:	javahelp2 >= 2.0.05
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 NetBeans Platform is a framework for development of 
