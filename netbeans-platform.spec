@@ -1,6 +1,6 @@
 Name:		libnb-platform7
 Version:	6.0
-Release:	%mkrel 0rc1.2
+Release:	%mkrel 1
 %define section		devel
 %define source_top	%{name}-src
 %define netbeansdir     %{_prefix}/lib/netbeans
@@ -9,7 +9,7 @@ Release:	%mkrel 0rc1.2
 
 Summary:	NetBeans Platform for Development of Rich Client Swing Applications
 URL:		http://platform.netbeans.org
-Source0:	http://download.netbeans.org/netbeans/6.0/rc1/zip/netbeans-6.0rc1-200711131200-platform-src.zip
+Source0:	http://download.netbeans.org/netbeans/6.0/final/zip/netbeans-6.0-200711261600-platform-src.zip
 
 Patch0:         netbeans-platform-build.patch
 
