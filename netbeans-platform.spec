@@ -1,6 +1,6 @@
 Name:		libnb-platform7
 Version:	6.0
-Release:	%mkrel 1
+Release:	%mkrel 2
 %define section		devel
 %define source_top	%{name}-src
 %define netbeansdir     %{_prefix}/lib/netbeans
@@ -12,6 +12,7 @@ URL:		http://platform.netbeans.org
 Source0:	http://download.netbeans.org/netbeans/6.0/final/zip/netbeans-6.0-200711261600-platform-src.zip
 
 Patch0:         netbeans-platform-build.patch
+Patch1:         netbeans-autoupdate-backport-124809.patch
 
 Epoch:		0
 License:	GPLv2 with exceptions or CDDL
@@ -76,6 +77,7 @@ echo "package javax.script; class empty { }" > libs/jsr223/src/javax/script/empt
 jar cf libs/jsr223/external/jsr223-api.jar libs/jsr223/src/javax/script/empty.java
 
 %patch0 -b .sav
+%patch1 -b .sav
 
 %build
 (cd nbbuild 
