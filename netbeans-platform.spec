@@ -1,9 +1,9 @@
 Name:		libnb-platform7
 Version:	6.0
-Release:	%mkrel 2
+Release:	%mkrel 3
 %define section		devel
 %define source_top	%{name}-src
-%define netbeansdir     %{_prefix}/lib/netbeans
+%define netbeansdir     %{_datadir}/netbeans
 
 %define clusterdir      %{netbeansdir}
 
