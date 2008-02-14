@@ -17,6 +17,7 @@ Patch1:         netbeans-autoupdate-backport-124809.patch
 Epoch:		0
 License:	GPLv2 with exceptions or CDDL
 Group:		Development/Java
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildArch:	noarch
 BuildRequires:	java-devel >= 1.6.0
 BuildRequires:	java-rpmbuild >= 0:1.5
