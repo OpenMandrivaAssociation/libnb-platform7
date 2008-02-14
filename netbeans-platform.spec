@@ -75,7 +75,7 @@ JAVADIR="%{_javadir}"
 JAVADOCDIR="%{_javadocdir}"
 RMF="%{__rm_f}"
 INS="%{__install}"
-NBDIR="$RPM_BUILD_ROOT/%{__clusterdir}"
+NBDIR="$RPM_BUILD_ROOT/%{clusterdir}"
 export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR
 sh -x %{SOURCE1} setup 
 
@@ -90,7 +90,7 @@ JAVADIR="%{_javadir}"
 JAVADOCDIR="%{_javadocdir}"
 RMF="%{__rm_f}"
 INS="%{__install}"
-NBDIR="$RPM_BUILD_ROOT/%{__clusterdir}"
+NBDIR="$RPM_BUILD_ROOT/%{clusterdir}"
 export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR
 
 sh -x %{SOURCE1} build || exit 1
@@ -100,13 +100,14 @@ sh -x %{SOURCE1} build_javadoc || exit 1
 
 %install
 
+%{__rm} -rf $RPM_BUILD_ROOT
 LNS="%{__ln_s}"
 MKDIRP="%{__mkdir_p}"
 JAVADIR="%{_javadir}"
 JAVADOCDIR="%{_javadocdir}"
 RMF="%{__rm_f}"
 INS="%{__install}"
-NBDIR="$RPM_BUILD_ROOT/%{__clusterdir}"
+NBDIR="$RPM_BUILD_ROOT/%{clusterdir}"
 export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR
 
 sh -x %{SOURCE1} install || exit 1
