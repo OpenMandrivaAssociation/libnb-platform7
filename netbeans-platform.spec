@@ -1,6 +1,6 @@
 Name:		libnb-platform7
-Version:	6.0
-Release:	%mkrel 3
+Version:	6.0.1
+Release:	%mkrel 1
 %define section		devel
 %define source_top	%{name}-src
 %define netbeansdir     %{_datadir}/netbeans
@@ -9,10 +9,11 @@ Release:	%mkrel 3
 
 Summary:	NetBeans Platform for Development of Rich Client Swing Applications
 URL:		http://platform.netbeans.org
-Source0:	http://download.netbeans.org/netbeans/6.0/final/zip/netbeans-6.0-200711261600-platform-src.zip
+Source0:	http://core.netbeans.org/files/documents/12/1805/netbeans-platform-6.0.1-src.tar.gz
+Source1: 	scripts.sh
 
-Patch0:         netbeans-platform-build.patch
-Patch1:         netbeans-autoupdate-backport-124809.patch
+Patch0:         10-build.patch
+Patch1:         20-netbeans-autoupdate-backport-124809.patch
 
 Epoch:		0
 License:	GPLv2 with exceptions or CDDL
@@ -66,119 +67,52 @@ find . -type d | xargs -t chmod 755
 find . -type f -exec chmod 644 {} ";"
 find . -type f \( -iname "*.jar" -o -iname "*.zip" \) | xargs -t %{__rm} -f
 
-%{__ln_s} %{_javadir}/javahelp2.jar core/javahelp/external/jh-2.0_05.jar
-%{__ln_s} %{_javadir}/javahelp2.jar apisupport/harness/external/jsearch-2.0_05.jar
-%{__ln_s} %{_javadir}/swing-layout.jar libs/swing-layout/external/swing-layout-1.0.3.jar
+mv netbeans-platform-%{version}/* .
 
-# generate empty javax.script file, so there is something in jsr223 API module
-%{__mkdir_p} libs/jsr223/src/javax/script/
-echo "package javax.script; class empty { }" > libs/jsr223/src/javax/script/empty.java
+LNS="%{__ln_s}"
+MKDIRP="%{__mkdir_p}"
+JAVADIR="%{_javadir}"
+JAVADOCDIR="%{_javadocdir}"
+RMF="%{__rm_f}"
+INS="%{__install}"
+NBDIR="$RPM_BUILD_ROOT/%{__clusterdir}"
+export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR
+sh -x %{SOURCE1} setup 
 
-%{__mkdir_p} libs/jsr223/external
-jar cf libs/jsr223/external/jsr223-api.jar libs/jsr223/src/javax/script/empty.java
-
-%patch0 -b .sav
-%patch1 -b .sav
+%patch0 -p1 -b .sav
+%patch1 -p1 -b .sav
 
 %build
-(cd nbbuild 
-ant \
-  -Djpp.repo=%{_javadir} \
-  -Dexternal.dir=%{_javadir} \
-  -Dant.jar=$(find-jar ant) \
-  -Dfile.reference.ant.jar=$(find-jar ant) \
-  -Dbuild.compiler.deprecation=false \
-  -Dbuild.compiler.debug=false \
-  -Dverify.checkout=false \
-  -Dpermit.jdk6.builds=true \
-  build-platform
-) || exit 1
 
-(cd apisupport/harness
-ant \
-  -Djpp.repo=%{_javadir} \
-  -Dexternal.dir=%{_javadir} \
-  -Dant.jar=$(find-jar ant) \
-  -Dfile.reference.ant.jar=$(find-jar ant) \
-  -Dbuild.compiler.deprecation=false \
-  -Dbuild.compiler.debug=false \
-  -Dverify.checkout=false \
-  -Dpermit.jdk6.builds=true \
-) || exit 1
+LNS="%{__ln_s}"
+MKDIRP="%{__mkdir_p}"
+JAVADIR="%{_javadir}"
+JAVADOCDIR="%{_javadocdir}"
+RMF="%{__rm_f}"
+INS="%{__install}"
+NBDIR="$RPM_BUILD_ROOT/%{__clusterdir}"
+export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR
 
-#(cd libs/external
-#ant
-#)
+sh -x %{SOURCE1} build || exit 1
+sh -x %{SOURCE1} build_devel || exit 1
+sh -x %{SOURCE1} build_javadoc || exit 1
 
-(cd nbbuild
-ant \
-  -Djpp.repo=%{_javadir} \
-  -Dexternal.dir=%{_javadir} \
-  -Dant.jar=$(find-jar ant) \
-  -Dfile.reference.ant.jar=$(find-jar ant) \
-  -Dbuild.compiler.deprecation=false \
-  -Dbuild.compiler.debug=false \
-  -Dverify.checkout=false \
-  -Dpermit.jdk6.builds=true \
-  -Dallmodules=\
-  -Dcluster.config=platform,\
-  -Dconfig.javadoc.cluster=platform7\
-  -Dconfig.javadoc.netbeans=openide/util,openide/actions,openide/options,openide/awt,\
-openide/dialogs,openide/nodes,openide/explorer,openide/fs,openide/modules,\
-openide/text,openide/windows,openide/loaders,openide/io,projects/queries,\
-core/progress,core/settings,core/javahelp,openide/execution,\
-core/sendopts,core/options,editor/mimelookup\
-  -Djavadoc.docs.org-netbeans-api-java=http://www.netbeans.org/download/6_0/javadoc/org-netbeans-api-java/\
-  -Djavadoc.docs.org-netbeans-modules-project-ant=http://www.netbeans.org/download/6_0/javadoc/org-netbeans-modules-project-ant/\
-  -Djavadoc.docs.org-netbeans-modules-projectapi=http://www.netbeans.org/download/6_0/javadoc/org-netbeans-modules-projectapi/\
-  build-javadoc 
-) || exit 1
 
 %install
-%{__rm} -rf $RPM_BUILD_ROOT
 
-%{__mkdir_p} ${RPM_BUILD_ROOT}%{_bindir}
-%{__mkdir_p} ${RPM_BUILD_ROOT}%{_sysconfdir}
-%{__mkdir_p} ${RPM_BUILD_ROOT}/%{clusterdir}
+LNS="%{__ln_s}"
+MKDIRP="%{__mkdir_p}"
+JAVADIR="%{_javadir}"
+JAVADOCDIR="%{_javadocdir}"
+RMF="%{__rm_f}"
+INS="%{__install}"
+NBDIR="$RPM_BUILD_ROOT/%{__clusterdir}"
+export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR
 
-# build initial path structure
-pushd nbbuild/netbeans
-    %{__cp} -r platform7 ${RPM_BUILD_ROOT}/%{clusterdir}
-    %{__chmod} a+x ${RPM_BUILD_ROOT}/%{clusterdir}/platform7/lib/nbexec
-popd
-# remove launchers for other os
-%{__rm} -f ${RPM_BUILD_ROOT}/%{clusterdir}/platform7/lib/nbexec.exe
-%{__rm} -f ${RPM_BUILD_ROOT}/%{clusterdir}/platform7/lib/nbexec.cmd
-# make this cluster disabled for autoupdate
-echo >${RPM_BUILD_ROOT}/%{clusterdir}/platform7/.noautoupdate
+sh -x %{SOURCE1} install || exit 1
+sh -x %{SOURCE1} install_devel || exit 1
+sh -x %{SOURCE1} install_javadoc || exit 1
 
-# link shared libraries to places NetBeans expect them at
-%{__rm} $RPM_BUILD_ROOT/%{clusterdir}/platform7/modules/ext/swing-layout-1.0.3.jar
-%{__ln_s} %{_javadir}/swing-layout.jar $RPM_BUILD_ROOT/%{clusterdir}/platform7/modules/ext/swing-layout-1.0.3.jar
-# the link to javahelp2 can be broken is javahelp2 package is not installed:
-#   - should not matter
-#   - the platform does not need it by itself
-#   - it just contains a wrapper
-#   - every package that is using netbeans platform and requires javahelp2 to work should add a dep on javahelp2
-#
-%{__rm} $RPM_BUILD_ROOT/%{clusterdir}/platform7/modules/ext/jh-2.0_05.jar
-%{__ln_s} %{_javadir}/javahelp2.jar $RPM_BUILD_ROOT/%{clusterdir}/platform7/modules/ext/jh-2.0_05.jar
-
-# now copy the javadoc
-%{__mkdir_p} $RPM_BUILD_ROOT%{_javadocdir}/netbeans-platform7
-%{__cp} -pr nbbuild/build/javadoc/* $RPM_BUILD_ROOT%{_javadocdir}/netbeans-platform7
-%{__rm} $RPM_BUILD_ROOT%{_javadocdir}/netbeans-platform7/*.zip
-
-
-# copy the harness
-pushd nbbuild/netbeans
-    %{__cp} -r harness ${RPM_BUILD_ROOT}/%{clusterdir}
-    # replace it with link to javahelp2
-    %{__rm} $RPM_BUILD_ROOT/%{clusterdir}/harness/jsearch-2.0_05.jar
-    %{__ln_s} %{_javadir}/javahelp2.jar $RPM_BUILD_ROOT/%{clusterdir}/harness/jsearch-2.0_05.jar
-popd
-# make this cluster disabled for autoupdate
-echo >${RPM_BUILD_ROOT}/%{clusterdir}/harness/.noautoupdate
 
 %clean
 %{__rm} -rf $RPM_BUILD_ROOT
@@ -194,6 +128,7 @@ echo >${RPM_BUILD_ROOT}/%{clusterdir}/harness/.noautoupdate
 %defattr(644,root,root,755)
 %dir %{clusterdir}/harness/
 %{clusterdir}/harness/*
+%{clusterdir}/harness/jsearch-2.0_05.jar
 # to prevent use of autoupdate on this directory
 %{clusterdir}/harness/.noautoupdate
 
