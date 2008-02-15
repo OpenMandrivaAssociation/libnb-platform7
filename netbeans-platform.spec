@@ -72,9 +72,9 @@ mv netbeans-platform-%{version}/* .
 LNS="%{__ln_s}"
 MKDIRP="%{__mkdir_p}"
 JAVADIR="%{_javadir}"
-JAVADOCDIR="%{_javadocdir}"
-RMF="%{__rm_f}"
-INS="%{__install}"
+JAVADOCDIR="$RPM_BUILD_ROOT/%{_javadocdir}/netbeans-platform7"
+RMF="%{__rm} -rf"
+INS="%{__cp} -r"
 NBDIR="$RPM_BUILD_ROOT/%{clusterdir}"
 export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR
 sh -x %{SOURCE1} setup 
@@ -87,9 +87,9 @@ sh -x %{SOURCE1} setup
 LNS="%{__ln_s}"
 MKDIRP="%{__mkdir_p}"
 JAVADIR="%{_javadir}"
-JAVADOCDIR="%{_javadocdir}"
-RMF="%{__rm_f}"
-INS="%{__install}"
+JAVADOCDIR="$RPM_BUILD_ROOT/%{_javadocdir}/netbeans-platform7"
+RMF="%{__rm} -rf"
+INS="%{__cp} -r"
 NBDIR="$RPM_BUILD_ROOT/%{clusterdir}"
 export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR
 
@@ -104,11 +104,13 @@ sh -x %{SOURCE1} build_javadoc || exit 1
 LNS="%{__ln_s}"
 MKDIRP="%{__mkdir_p}"
 JAVADIR="%{_javadir}"
-JAVADOCDIR="%{_javadocdir}"
-RMF="%{__rm_f}"
-INS="%{__install}"
+JAVADOCDIR="$RPM_BUILD_ROOT/%{_javadocdir}/netbeans-platform7"
+RMF="%{__rm} -rf"
+INS="%{__cp} -r"
 NBDIR="$RPM_BUILD_ROOT/%{clusterdir}"
 export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR
+
+%{__mkdir_p} $NBDIR
 
 sh -x %{SOURCE1} install || exit 1
 sh -x %{SOURCE1} install_devel || exit 1
