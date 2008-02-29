@@ -1,6 +1,6 @@
 Name:		libnb-platform7
 Version:	6.0.1
-Release:	%mkrel 1
+Release:	%mkrel 2
 %define section		devel
 %define source_top	%{name}-src
 %define netbeansdir     %{_datadir}/netbeans
@@ -76,7 +76,8 @@ JAVADOCDIR="$RPM_BUILD_ROOT/%{_javadocdir}/netbeans-platform7"
 RMF="%{__rm} -rf"
 INS="%{__cp} -r"
 NBDIR="$RPM_BUILD_ROOT/%{clusterdir}"
-export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR
+JHJAR=javahelp2.jar
+export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR JHJAR
 sh -x %{SOURCE1} setup 
 
 %patch0 -p1 -b .sav
@@ -91,7 +92,8 @@ JAVADOCDIR="$RPM_BUILD_ROOT/%{_javadocdir}/netbeans-platform7"
 RMF="%{__rm} -rf"
 INS="%{__cp} -r"
 NBDIR="$RPM_BUILD_ROOT/%{clusterdir}"
-export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR
+JHJAR=javahelp2.jar
+export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR JHJAR
 
 sh -x %{SOURCE1} build || exit 1
 sh -x %{SOURCE1} build_devel || exit 1
@@ -108,7 +110,8 @@ JAVADOCDIR="$RPM_BUILD_ROOT/%{_javadocdir}/netbeans-platform7"
 RMF="%{__rm} -rf"
 INS="%{__cp} -r"
 NBDIR="$RPM_BUILD_ROOT/%{clusterdir}"
-export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR
+JHJAR=javahelp2.jar
+export LNS MKDIRP JAVADIR JAVADOCDIR RMF INS NBDIR JHJAR
 
 %{__mkdir_p} $NBDIR
 
