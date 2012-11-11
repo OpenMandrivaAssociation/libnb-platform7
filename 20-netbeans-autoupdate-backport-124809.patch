@@ -1,0 +1,153 @@
+diff -Nur -x '*.orig' -x '*~' libnb-platform7-java-6.0.1/autoupdate/services/libsrc/org/netbeans/updater/UpdateTracking.java libnb-platform7-java-6.0.1.new/autoupdate/services/libsrc/org/netbeans/updater/UpdateTracking.java
+--- libnb-platform7-java-6.0.1/autoupdate/services/libsrc/org/netbeans/updater/UpdateTracking.java	2007-10-14 16:01:52.000000000 +0200
++++ libnb-platform7-java-6.0.1.new/autoupdate/services/libsrc/org/netbeans/updater/UpdateTracking.java	2008-01-30 15:16:02.000000000 +0100
+@@ -93,6 +93,7 @@
+     public static final String TRACKING_FILE_NAME = "update_tracking"; // NOI18N
+     public static final String ADDITIONAL_INFO_FILE_NAME = "additional_information.xml"; // NOI18N
+     private static final String XML_EXT = ".xml"; // NOI18N
++    private static final String FORBID_AUTOUPDATE = ".noautoupdate"; // NOI18N
+ 
+     /** maps root of clusters to tracking files. (File -> UpdateTracking) */
+     private static final Map<File, UpdateTracking> trackings = new HashMap<File, UpdateTracking> ();
+@@ -106,7 +107,6 @@
+     private final File directory;
+     private final File trackingFile;
+     private String origin = NBM_ORIGIN;
+-
+     
+     /** Private constructor.
+      */
+@@ -118,7 +118,6 @@
+         origin = UPDATER_ORIGIN;
+     }
+     
+-    
+     //
+     // Various factory and utility methods
+     //
+@@ -138,14 +137,13 @@
+                     // do not allow creation at all (only in userdir)
+                     return null;
+                 }
+-                File noAU = new File(path, ".noautoupdate"); // NOI18N
++                File noAU = new File(path, FORBID_AUTOUPDATE); // NOI18N
+                 if (noAU.exists()) {
+                     // ok, this prevents autoupdate from accessing this 
+                     // directory completely
+                     return null;
+                 }
+                 
+-                
+                 track = new UpdateTracking (path);
+                 trackings.put (path, track);
+                 track.read ();
+@@ -210,7 +208,12 @@
+         if (includeUserDir) {
+             File ud = getUserDir ();
+             if (ud != null) {
+-                files.add(ud);
++                // this prevents autoupdate from accessing this 
++                // directory completely
++                File noAU = new File (ud, FORBID_AUTOUPDATE); // NOI18N
++                if (! noAU.exists ()) {
++                    files.add (ud);
++                }
+             }
+         }
+         
+@@ -219,14 +222,24 @@
+             Enumeration en = new StringTokenizer (dirs, File.pathSeparator);
+             while (en.hasMoreElements ()) {
+                 File f = new File ((String)en.nextElement ());
+-                files.add (f);
++                // this prevents autoupdate from accessing this 
++                // directory completely
++                File noAU = new File (f, FORBID_AUTOUPDATE); // NOI18N
++                if (! noAU.exists ()) {
++                    files.add (f);
++                }
+             }
+         }
+         
+         
+         File id = getPlatformDir ();
+         if (id != null) {
+-            files.add(id);
++            // this prevents autoupdate from accessing this 
++            // directory completely
++            File noAU = new File (id, FORBID_AUTOUPDATE); // NOI18N
++            if (! noAU.exists ()) {
++                files.add (id);
++            }
+         }
+         
+         return java.util.Collections.unmodifiableList (files);
+diff -Nur -x '*.orig' -x '*~' libnb-platform7-java-6.0.1/autoupdate/services/src/org/netbeans/modules/autoupdate/services/InstallManager.java libnb-platform7-java-6.0.1.new/autoupdate/services/src/org/netbeans/modules/autoupdate/services/InstallManager.java
+--- libnb-platform7-java-6.0.1/autoupdate/services/src/org/netbeans/modules/autoupdate/services/InstallManager.java	2007-09-26 23:16:34.000000000 +0200
++++ libnb-platform7-java-6.0.1.new/autoupdate/services/src/org/netbeans/modules/autoupdate/services/InstallManager.java	2008-01-30 15:16:02.000000000 +0100
+@@ -156,7 +156,7 @@
+                     res = cluster;
+                     break;
+                 } else {
+-                    ERR.log(Level.WARNING, "No write permission in target cluster " + targetCluster + " for " + update.getUpdateElement());
++                    ERR.log(Level.WARNING, "It's forbidden to write in target cluster " + targetCluster + " for " + update.getUpdateElement());
+                 }
+             }
+         }
+@@ -270,7 +270,7 @@
+ 
+         if (res == null || ! res.canWrite ()) {
+             // go to userdir if no writable cluster is known
+-            ERR.log (Level.WARNING, "No write permission in target cluster " + res + 
++            ERR.log (Level.WARNING, "It's forbidden to write in target cluster " + res + 
+                     " for " + update.getUpdateElement ());
+             res = UpdateTracking.getUserDir ();
+         }
+diff -Nur -x '*.orig' -x '*~' libnb-platform7-java-6.0.1/autoupdate/services/src/org/netbeans/modules/autoupdate/services/ModuleDeleterImpl.java libnb-platform7-java-6.0.1.new/autoupdate/services/src/org/netbeans/modules/autoupdate/services/ModuleDeleterImpl.java
+--- libnb-platform7-java-6.0.1/autoupdate/services/src/org/netbeans/modules/autoupdate/services/ModuleDeleterImpl.java	2007-10-25 12:20:38.000000000 +0200
++++ libnb-platform7-java-6.0.1.new/autoupdate/services/src/org/netbeans/modules/autoupdate/services/ModuleDeleterImpl.java	2008-01-30 15:16:02.000000000 +0100
+@@ -252,11 +252,18 @@
+         if (updateTracking != null && updateTracking.exists ()) {
+             //err.log ("Find UPDATE_TRACKING: " + updateTracking + " found.");
+             // check the write permission
+-            if (! updateTracking.getParentFile ().canWrite ()) {
++            File installCluster = null;
++            for (File cluster : UpdateTracking.clusters (true)) {       
++                if (isParentOf (cluster, updateTracking)) {
++                    installCluster = cluster;
++                    break;
++                }
++            }
++            if (installCluster == null || ! installCluster.canWrite ()) {
+                 err.log(Level.FINE,
+                         "Cannot delete module " + moduleInfo.getCodeName() +
+-                        " because no write permission to directory " +
+-                        updateTracking.getParent());
++                        " because is forbidden to write in directory " +
++                        updateTracking.getParentFile ().getParent ());
+                 return false;
+             }
+             return true;
+@@ -268,6 +275,22 @@
+         }
+     }
+             
++    private static boolean isParentOf (File parent, File child) {
++        if (parent.equals (child.getParentFile ())) {
++            return true;
++        }
++        if (! parent.isDirectory ()) {
++            return false;
++        }
++        File [] childs = parent.listFiles ();
++        for (int i = 0; i < childs.length; i++) {
++            if (isParentOf (childs [i], child)) {
++                return true;
++            }
++        }
++        return false;
++    }
++    
+     private void removeModuleFiles (ModuleInfo m, boolean markForDelete) throws IOException {
+         err.log (Level.FINE, "Entry removing files of module " + m);
+         File updateTracking = null;

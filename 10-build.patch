@@ -1,0 +1,11 @@
+diff -Nur -x '*.orig' -x '*~' libnb-platform7-java-6.0.1/core/bootstrap/build.xml libnb-platform7-java-6.0.1.new/core/bootstrap/build.xml
+--- libnb-platform7-java-6.0.1/core/bootstrap/build.xml	2007-09-26 22:30:42.000000000 +0200
++++ libnb-platform7-java-6.0.1.new/core/bootstrap/build.xml	2008-01-28 14:45:55.000000000 +0100
+@@ -65,7 +65,6 @@
+     <target name="release" depends="init">
+         <copy file="../launcher/unix/nbexec" todir="${cluster}/lib" />
+         <chmod file="${cluster}/lib/nbexec" perm="ugo+rx"/>
+-        <copy file="../launcher/windows/nbexec.exe" todir="${cluster}/lib/" />
+         <fixcrlf srcdir="${cluster}/lib" eol="lf">
+             <include name="**/*.sh"/>
+             <include name="**/ide.cfg"/>
