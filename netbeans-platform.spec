@@ -8,7 +8,7 @@ Release:	8
 %define clusterdir      %{netbeansdir}
 
 Summary:	NetBeans Platform for Development of Rich Client Swing Applications
-URL:		http://platform.netbeans.org
+URL:		https://platform.netbeans.org
 Source0:	http://core.netbeans.org/files/documents/12/1805/netbeans-platform-6.0.1-src.tar.gz
 Source1: 	scripts.sh
 
